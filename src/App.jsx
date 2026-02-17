@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <div className='text-[20px]'>Testing appffffeeeee</div>
+      <div className='text-[20px]'>Testing app</div>
     </>
   )
 }
