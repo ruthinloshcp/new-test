@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import defaultProfImage from "../../assets/defaultprof.png";
 import Api from "../../services/Api";
+import { ClipLoader } from "react-spinners";
 
 function AddUserModal({ isOpen, onClose, selectedUser, setRefreshKey }) {
     const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ function AddUserModal({ isOpen, onClose, selectedUser, setRefreshKey }) {
     const [profileImage, setProfileImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const token = localStorage.getItem("token");
 
@@ -106,12 +108,13 @@ function AddUserModal({ isOpen, onClose, selectedUser, setRefreshKey }) {
         // if (formData.profileImage) {
         //     submitData.append("user_picture", formData.profileImage);
         // }
-
+        setLoading(true);
 
         Api.post('api/user', submitData, {
             Authorization: `Bearer ${token}`
         })
             .then(response => {
+                setLoading(false)
                 if (response.status === 200) {
                     console.log("User added successfully:", response.data);
                     setRefreshKey(prev => prev + 1);
@@ -145,6 +148,8 @@ function AddUserModal({ isOpen, onClose, selectedUser, setRefreshKey }) {
         // console.log("update User:", formData);
         // console.log("Selected User for Update:", selectedUser);
 
+        setLoading(true);
+
         Api.post(`api/user/${selectedUser.id}`, {
             name: formData.name,
             email: formData.email,
@@ -157,6 +162,7 @@ function AddUserModal({ isOpen, onClose, selectedUser, setRefreshKey }) {
             Authorization: `Bearer ${token}`
         })
             .then(response => {
+                setLoading(false);
                 if (response.status === 200) {
                     console.log("User update resp:", response);
                     setRefreshKey(prev => prev + 1);
@@ -442,6 +448,22 @@ function AddUserModal({ isOpen, onClose, selectedUser, setRefreshKey }) {
                 </div>
 
             </div>
+
+            {loading && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="flex items-center justify-center gap-4 bg-white w-auto p-10  shadow-lg">
+                        <ClipLoader
+                            color={'#413c5a'}
+                            loading={true}
+                            size={32}
+                            aria-label="Loading Spinner"
+                            data-testid="Loader"
+                        />
+                        <div> Loading.. Please wait !</div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
